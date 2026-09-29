@@ -1,0 +1,31 @@
+{
+  "name": "ap-recon-service",
+  "version": "0.1.0",
+  "description": "Backend + database service for the AP invoice reconciliation frontend (ap-recon-frontend)",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "smoke-test": "node scripts/smoke-test.js",
+    "discover-d365": "node scripts/find-d365-entity.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "multer": "^2.0.1",
+    "dotenv": "^16.4.7",
+    "express-rate-limit": "^7.4.1",
+    "helmet": "^8.0.0",
+    "@google/genai": "^0.14.0",
+    "openai": "^4.77.0",
+    "@azure/identity": "^4.5.0",
+    "@azure/msal-node": "^6.0.0"
+  }
+}

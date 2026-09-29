@@ -1,0 +1,14 @@
+{
+  "name": "ap-recon-reference-server",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "description": "Reference implementation of the API contract proposed in ../src/lib/api.js — for testing the frontend and as a starting point for the real routes on ap-recon-service. This is NOT ap-recon-service.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,78 @@
+# AP Reconciliation — local stack.
+#
+# One command, on any machine with Docker Desktop installed, no other setup:
+#
+#   docker compose up
+#
+# Brings up: Postgres (with data that survives restarts), this backend
+# (auto-runs migrations on boot, then starts listening), and Adminer — a
+# point-and-click database browser at http://localhost:8080, for anyone who
+# wants to look at the actual data without writing SQL. See the README for
+# the full walkthrough, including seeding demo data.
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localdev
+      POSTGRES_DB: ap_recon
+    ports:
+      - "5432:5432" # exposed so a GUI tool on your own machine (not just Adminer) can also connect if you want
+    volumes:
+      - ap_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://postgres:localdev@db:5432/ap_recon
+      PORT: 3001
+      CORS_ORIGIN: http://localhost:5173
+      FILE_STORAGE_ROOT: /app/storage/invoices
+      # LLM / D365 / Odoo credentials: pass these through from your own .env
+      # file (docker compose reads .env in this folder automatically) rather
+      # than hardcoding them here. The app runs fine with none of them set —
+      # uploads and matching just won't do anything until they're configured.
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT:-}
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY:-}
+      AZURE_OPENAI_DEPLOYMENT: ${AZURE_OPENAI_DEPLOYMENT:-}
+      D365_TENANT_ID: ${D365_TENANT_ID:-}
+      D365_CLIENT_ID: ${D365_CLIENT_ID:-}
+      D365_CLIENT_SECRET: ${D365_CLIENT_SECRET:-}
+      D365_ENVIRONMENT_URL: ${D365_ENVIRONMENT_URL:-}
+      ODOO_URL: ${ODOO_URL:-}
+      ODOO_DB: ${ODOO_DB:-}
+      ODOO_USERNAME: ${ODOO_USERNAME:-}
+      ODOO_API_KEY: ${ODOO_API_KEY:-}
+      PO_REFRESH_TTL_HOURS: ${PO_REFRESH_TTL_HOURS:-24}
+    volumes:
+      - ap_files:/app/storage/invoices
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+
+volumes:
+  ap_pgdata:
+  ap_files:
