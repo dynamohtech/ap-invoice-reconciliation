@@ -2,6 +2,8 @@
 
 Match supplier invoices against purchase orders and goods receipts across **Microsoft Dynamics 365 Finance & Operations** and **Odoo**, with LLM extraction and a human review queue.
 
+**[▶ Live demo](https://ap-invoice-reconciliation.vercel.app)** — log in as `approver` with password `demo1234`. The demo runs on built-in fictional data; nothing you do there is saved.
+
 Built for finance teams in groups where subsidiaries run different ERPs. Manual invoice processing costs $12.88 to $19.83 per invoice against $2.78 for best-in-class teams ([Parseur, 2026](https://parseur.com/blog/ai-invoice-processing-benchmarks)). The expensive part is the checking; this app automates the comparison and leaves the decision to people.
 
 ![Invoice review: extracted invoice beside the D365 receipt, with field-level mismatches flagged](docs/screenshots/invoice-review.png)
